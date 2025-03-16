@@ -7,6 +7,7 @@ import { sendData } from '@/service'
 const From = () => {
   const ref = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState<undefined | number>(undefined)
+  const [isLoading, setIsLoading] = useState(false)
   const param = new URLSearchParams(window.location.search)
   const name = param.get('name')
   const [data, setData] = useState<{
@@ -62,18 +63,28 @@ const From = () => {
               className="flex max-h-[60px] w-full items-center justify-center gap-2 overflow-hidden transition-all duration-300 data-[disabled=true]:max-h-0"
             >
               <button
-                disabled={Object.values(data).some((item) => !item)}
-                className="mt-4 rounded-[10px] bg-primary p-2 text-white shadow-lg"
+                data-loading={isLoading}
+                disabled={Object.values(data).some((item) => !item) || isLoading}
+                className="group relative mt-4 rounded-[10px] bg-primary p-2 text-white shadow-lg disabled:opacity-60"
                 onClick={async () => {
-                  await sendData({ name: data.name, title: data.title, content: data.content }).then((success) => {
-                    if (success) {
-                      setData({ name: name ?? '', title: '', content: '' })
-                      alert('Nhận được rùi nha!')
-                    } else alert('Lỗi rồi bà ơi. Inbox tui đi.')
-                  })
+                  setIsLoading(true)
+                  const res = await sendData({ name: data.name, title: data.title, content: data.content })
+                  setIsLoading(false)
+                  if (res) {
+                    setData({ name: name ?? '', title: '', content: '' })
+                    alert('Nhận được rùi nha!')
+                  } else {
+                    alert('Lỗi rồi bà ơi. Inbox tui đi.')
+                  }
                 }}
               >
-                Gửi luôn
+                {isLoading && (
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <span className="aspect-square w-[20%] animate-spin rounded-full border-y-2 border-white"></span>
+                  </span>
+                )}
+
+                <span className="relative group-data-[loading=true]:opacity-0">Gửi luôn</span>
               </button>
             </div>
           )}
