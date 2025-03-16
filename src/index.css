@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --primary: #7b5d3f;
+  --background: #f8f6e9;
+}
+
+body,
+#root {
+  height: 100dvh;
+  width: 100dvw;
+  overflow: hidden;
+  font-family: 'Playfair Display', serif;
+  color: black;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
